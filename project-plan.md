@@ -233,10 +233,10 @@ Total Closing Costs = Total Loan Costs + Prepaids
 ## 4. UI Component List
 
 ### Layout Components
-- `AppShell` — sidebar + header + main content area
-- `Sidebar` — Dashboard, Loan Details, Forms, My Team, Settings, Support nav items
-- `TopNav` — borrower profile, loan officer info, tab switcher
-- `TabBar` — Loan Quote / Pre Approvals / Contacts
+- ~~`AppShell`~~ → replaced by inline shell in `app/page.tsx` (sticky header + sticky bottom bar, no sidebar)
+- `Sidebar` — built, kept in `components/layout/Sidebar.tsx`, **not rendered** (V2)
+- `TopNav` — built, kept in `components/layout/TopNav.tsx`, **not rendered** (V2)
+- ~~`TabBar`~~ → removed; tabs (Pre Approvals / Contacts) deferred to V2
 
 ### Form Components
 - `SectionCard` — collapsible/labeled card wrapping each group
@@ -533,52 +533,61 @@ The following were considered and **deliberately cut** from V1. They must not be
 Phases must be completed in order. Do not begin a phase until the previous phase is verified working.
 
 ```
-Phase 1 — Foundation
+Phase 1 — Foundation                                             ✅ COMPLETE
   ├── lib/types.ts          Data model interfaces
   ├── lib/rules.ts          All config, fee tables, defaults
   ├── lib/calculations.ts   Pure calculation functions
   └── lib/ruleEngine.ts     Visibility, label, and validation logic
 
-Phase 2 — Layout Shell
+Phase 2 — Layout Shell                                           ✅ COMPLETE
   ├── app/layout.tsx        Root layout, dark background
-  ├── AppShell              Sidebar + main area
-  ├── Sidebar               Nav links (non-functional stubs OK for now)
-  └── TopNav                Borrower name, officer info, tab bar, action buttons
+  ├── app/page.tsx          Full-width shell (header bar + sticky bottom)
+  ├── Sidebar               Built (components/layout/Sidebar.tsx) — not rendered
+  └── TopNav                Built (components/layout/TopNav.tsx) — not rendered
 
-Phase 3 — Primitive UI Components
+Phase 3 — Primitive UI Components                                ✅ COMPLETE
   ├── CurrencyInput
   ├── PercentInput
   ├── TextInput
   ├── SelectDropdown
   ├── ToggleSwitch
-  ├── CheckboxRow
-  └── DateInput
+  ├── FieldRow / ReadOnlyField
+  └── SectionCard (kept, not used in new layout)
 
-Phase 4 — Form Sections (top to bottom)
-  ├── PropertyDetails
-  ├── LoanParameters        (with all conditional sub-fields)
-  ├── LoanAmounts           (read-only calculated outputs)
-  ├── ProjectedPayments     (read-only calculated outputs)
-  ├── TaxInsuranceSection
-  └── ClosingCostSections   (Origination, Credits, Cannot Shop, Can Shop, Prepaids, Recording)
+Phase 4 — Form Sections (top to bottom)                         ✅ COMPLETE
+  ├── LoanDetailsSection    NEW — merges PropertyDetails + LoanParameters
+  ├── LoanAmounts           "Loan Term" section, 4-col + $/% toggle
+  ├── ProjectedPayments     4-col read-only + inline TaxInsuranceSection
+  ├── TaxInsuranceSection   Flat 4-col card grid
+  └── ClosingCostsSection   2-col Loan Costs / Other Costs + Cash to Close
 
-Phase 5 — Interactivity
+Phase 5 — Interactivity                                          ✅ COMPLETE
   ├── AddConfigModal
   ├── Update Quote → triggers full recalc
   ├── Inline validation + warnings
   └── localStorage save/restore
 
-Phase 6 — PDF Preview
+Phase 6 — PDF Preview                                            ✅ COMPLETE
   ├── app/preview/loan-quote/Page1.tsx
   ├── app/preview/loan-quote/Page2.tsx
   ├── app/preview/loan-quote/Page3.tsx
   ├── print.css
   └── End-to-end test: fill form → Update Quote → Preview → Print
 
-Phase 7 — Branding & Polish
-  ├── lib/brand.ts          Populate with real broker details
-  ├── public/logo.png       If supplied
+Phase 7 — Branding & Polish                                      ⏳ IN PROGRESS
+  ├── lib/brand.ts          Populated with broker details (Midwest Mortgage)
+  ├── public/logo.png       Not yet supplied
   └── Final dark theme pass matching screenshots pixel-by-pixel
+
+Phase 8 — Layout Redesign (MLOflo-style)                        ✅ COMPLETE
+  ├── Sidebar-free full-width form
+  ├── Inline header bar (Name input + action buttons)
+  ├── LoanDetailsSection (new merged section)
+  ├── 4-col Loan Term grid with $/% down-payment toggle
+  ├── 4-col Projected Payments + flat Tax/Insurance
+  ├── 2-col Closing Costs + Cash to Close panel
+  ├── LineItemList: select dropdown + Copy button + X delete
+  └── Sticky bottom Update Quote + Complete bar
 ```
 
 ---
@@ -1358,43 +1367,41 @@ Each item maps to a file or folder in the project. Check off as built.
 > `components/` — all interactive form elements and layout shells
 
 **Layout**
-- [ ] `AppShell` — sidebar + main content wrapper, dark theme
-- [ ] `Sidebar` — nav links: Dashboard, Loan Details, Forms, My Team, Settings, Support
-- [ ] `TopNav` — borrower name, loan officer info, tab bar, preview/back buttons
-- [ ] `TabBar` — Loan Quote (active) / Pre Approvals (stub) / Contacts (stub)
+- [x] ~~`AppShell`~~ → `app/page.tsx` full-width shell (sticky header + sticky bottom bar)
+- [x] `Sidebar` — built, not rendered (V2)
+- [x] `TopNav` — built, not rendered (V2)
+- [ ] `TabBar` — deferred to V2
 
 **Primitive Inputs** (`components/ui/`)
-- [ ] `CurrencyInput` — `$` prefix, 2 decimal places, comma formatting, no negatives
-- [ ] `PercentInput` — `%` suffix, 3 decimal places
-- [ ] `TextInput` — generic single-line text
-- [ ] `SelectDropdown` — styled select with "Select" placeholder, dark theme
-- [ ] `DateInput` — calendar picker, future-date validation
-- [ ] `ToggleSwitch` — Yes / No binary, animated, blue when Yes
-- [ ] `CheckboxRow` — checkbox + label + currency amount + toggle (Taxes section)
+- [x] `CurrencyInput` — `$` prefix, 2 decimal places, comma formatting, no negatives
+- [x] `PercentInput` — `%` suffix, 3 decimal places
+- [x] `TextInput` — generic single-line text
+- [x] `SelectDropdown` — styled select with "Select" placeholder, dark theme
+- [x] `DateInput` — via `TextInput type="date"`
+- [x] `ToggleSwitch` — Yes / No binary, animated, blue when Yes
+- [x] `FieldRow` — label + optional error/hint wrapper
+- [x] `ReadOnlyField` — calculated output display
+- [x] `SectionCard` — built, not used in new layout (V2 reference)
 
 **Form Sections** (`components/form/`)
-- [ ] `SectionCard` — collapsible card with labeled header, consistent padding
-- [ ] `PropertyDetails` — Street, City, Zip, State, Purpose (with conditional fields)
-- [ ] `LoanParameters` — Loan Type, Term, Product, VA sub-fields, Refinance sub-fields
-- [ ] `LoanAmounts` — Down Payment, Interest Rate, Base Loan Amount, Funding Fee (read-only)
-- [ ] `ProjectedPayments` — P&I, MI, Escrow, Total (all read-only calculated outputs)
-- [ ] `TaxInsuranceSection` — dynamic checklist rows with escrow toggles + "Other" custom row
+- [x] `LoanDetailsSection` — NEW: merged address + loan params, 4-col grids
+- [x] `LoanAmounts` — "Loan Term" 4-col section with $/% down-payment toggle
+- [x] `ProjectedPayments` — 4-col read-only + inline TaxInsuranceSection
+- [x] `TaxInsuranceSection` — flat 4-col card grid with escrow toggles
+- [x] `PropertyDetails` — kept (superseded by LoanDetailsSection)
+- [x] `LoanParameters` — kept (superseded by LoanDetailsSection)
+- [x] `BorrowerInfo` — kept (borrower name moved to header bar)
 
 **Closing Costs** (`components/closing-costs/`)
-- [ ] `OriginationCharges` — list of line items + Add Configuration + delete buttons
-- [ ] `OtherCredits` — Seller Credit, Lender Credit, Funds for Borrower inputs
-- [ ] `ServicesCannotShop` — pre-populated editable list
-- [ ] `ServicesCanShop` — configurable list + Add Configuration
-- [ ] `PrepaidItems` — Homeowner's Insurance Premium, MI Premium, Prepaid Interest, Initial Escrow
-- [ ] `RecordingFees` — Recording Fee - mortgage
-- [ ] `SectionSubtotal` — bold total row with auto-calculated sum
-- [ ] `AddConfigModal` — modal: Name input, Type dropdown, Value currency input, Save / Cancel
+- [x] `ClosingCostsSection` — 2-col Loan/Other Costs + Calculating Cash to Close
+- [x] `LineItemList` — select dropdown type, Copy button, X delete
+- [x] `AddConfigModal` — modal: Name input, Type dropdown, Value currency input, Save / Cancel
 
-**Actions**
-- [ ] `UpdateQuoteButton` — triggers full recalculation, saves to localStorage
-- [ ] `CompleteButton` — finalizes and navigates to Preview Loan Quote
-- [ ] `PreviewLoanQuoteButton` — opens `/preview/loan-quote` in new tab
-- [ ] `PreviewFeeSheetButton` — opens `/preview/fee-sheet` in new tab (V2 — stub for now)
+**Actions** (inline in `app/page.tsx`)
+- [x] `Update Quote` button — triggers full recalculation, saves to localStorage
+- [x] `Complete` button — saves + navigates to `/preview/loan-quote`
+- [x] `Preview Loan Quote` button — saves + navigates to `/preview/loan-quote`
+- [ ] `Preview Fee Sheet` button — stub (V2)
 
 ---
 
@@ -1467,13 +1474,16 @@ Each item maps to a file or folder in the project. Check off as built.
 
 | Deliverable | Files | Status |
 |---|---|---|
-| Config File | `lib/rules.ts` | ☐ Not started |
-| Calculation Engine | `lib/calculations.ts` | ☐ Not started |
-| UI Components | `components/ui/`, `components/form/`, `components/closing-costs/` | ☐ Not started |
-| PDF Generator | `app/preview/loan-quote/` | ☐ Not started |
-| Rule Engine | `lib/ruleEngine.ts` | ☐ Not started |
-| Branding Layer | `lib/brand.ts`, `public/logo.png` | ☐ Not started |
-| Deployment Files | `package.json`, `tailwind.config.ts`, `.gitignore`, `README.md` | ☐ Not started |
+| Config File | `lib/rules.ts` | ✅ Complete |
+| Calculation Engine | `lib/calculations.ts` | ✅ Complete |
+| UI Primitives | `components/ui/` (8 components) | ✅ Complete |
+| Form Sections | `components/form/` (LoanDetailsSection, LoanAmounts, ProjectedPayments, TaxInsuranceSection) | ✅ Complete |
+| Closing Costs | `components/closing-costs/` (ClosingCostsSection, LineItemList, AddConfigModal) | ✅ Complete |
+| Layout Shell | `app/page.tsx` — sidebar-free, header bar, sticky bottom | ✅ Complete |
+| PDF Generator | `app/preview/loan-quote/` (Page1–3, print.css) | ✅ Complete |
+| Rule Engine | `lib/ruleEngine.ts` | ✅ Complete |
+| Branding Layer | `lib/brand.ts` (populated); `public/logo.png` (pending) | ⏳ Partial |
+| Deployment Files | `package.json`, `tsconfig.json`, `.gitignore`, `README.md`, `netlify.toml`, `vercel.json` | ✅ Complete |
 
 ---
 
