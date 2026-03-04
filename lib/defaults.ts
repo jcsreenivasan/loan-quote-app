@@ -25,6 +25,8 @@ export function createDefaultQuote(): LoanQuote {
     status: null,
 
     borrowerName: '',
+    borrowerEmail: '',
+    borrowerPhone: '',
     coBorrowerName: '',
     loanOfficerName: BRAND.loanOfficerName,
     loanOfficerNMLS: BRAND.loanOfficerNMLS,

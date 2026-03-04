@@ -134,6 +134,8 @@ export interface LoanQuote {
 
   // Borrower / officer (stored on the file, not the quote — kept here for UI)
   borrowerName:       string
+  borrowerEmail:      string
+  borrowerPhone:      string
   coBorrowerName:     string
   loanOfficerName:    string
   loanOfficerNMLS:    string

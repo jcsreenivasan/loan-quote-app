@@ -247,7 +247,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
             <LineItemList
               items={quote.canShopFor}
               onChange={v => onChange('canShopFor', v)}
-              lockedCount={1}
+              lockedCount={0}
               typeOptions={SERVICE_TYPES}
             />
             {showModalC && (

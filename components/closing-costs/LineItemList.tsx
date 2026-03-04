@@ -1,6 +1,6 @@
 'use client'
 
-import { X, Copy } from 'lucide-react'
+import { Trash2, Copy } from 'lucide-react'
 import CurrencyInput from '@/components/ui/CurrencyInput'
 import type { LineItem } from '@/lib/types'
 
@@ -84,10 +84,10 @@ export default function LineItemList({
             {!isLocked ? (
               <button
                 onClick={() => removeItem(item._id)}
-                className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition p-0.5"
+                className="text-gray-600 hover:text-red-400 transition p-0.5"
                 title="Remove"
               >
-                <X size={13} />
+                <Trash2 size={13} />
               </button>
             ) : (
               <div className="w-[22px]" />

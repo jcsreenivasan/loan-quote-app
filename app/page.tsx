@@ -50,10 +50,10 @@ export default function Home() {
 
       {/* ── Header bar ── */}
       <header className="flex items-center justify-between gap-4 px-6 py-3 bg-[#1a1a1a] border-b border-[#2a2a2a] sticky top-0 z-20">
-        {/* Left: Name input */}
-        <div className="flex items-center gap-2 min-w-0">
+        {/* Left: Name / Email / Phone inputs */}
+        <div className="flex items-center gap-3 min-w-0">
           <span className="text-xs text-gray-500 shrink-0">Name:</span>
-          <div className="w-56">
+          <div className="w-44">
             <TextInput
               value={quote.borrowerName}
               onChange={v => handleChange('borrowerName', v)}
@@ -63,6 +63,22 @@ export default function Home() {
           {errors.borrowerName && (
             <span className="text-xs text-red-400 shrink-0">{errors.borrowerName}</span>
           )}
+          <span className="text-xs text-gray-500 shrink-0">Email:</span>
+          <div className="w-44">
+            <TextInput
+              value={quote.borrowerEmail}
+              onChange={v => handleChange('borrowerEmail', v)}
+              placeholder="email@example.com"
+            />
+          </div>
+          <span className="text-xs text-gray-500 shrink-0">Phone:</span>
+          <div className="w-44">
+            <TextInput
+              value={quote.borrowerPhone}
+              onChange={v => handleChange('borrowerPhone', v)}
+              placeholder="(555) 000-0000"
+            />
+          </div>
         </div>
 
         {/* Right: action buttons */}
