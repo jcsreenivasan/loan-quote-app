@@ -28,6 +28,11 @@ const LOAN_TYPES: { value: LoanProductType; label: string }[] = [
   { value: 'Other',        label: 'Other' },
 ]
 
+const RATE_LOCK_OPTIONS = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no',  label: 'No'  },
+]
+
 const VA_TYPES = [
   { value: 'first_time_use', label: 'First Time Use' },
   { value: 'subsequent_use', label: 'Subsequent Use' },
@@ -133,17 +138,21 @@ export default function LoanDetailsSection({ quote, errors, onChange }: Props) {
             options={LOAN_TYPES}
           />
         </FieldRow>
-        {shouldShowField('rateLock', quote) ? (
-          <FieldRow label="Rate Lock">
-            <div className="flex items-center h-9 mt-1">
-              <ToggleSwitch
-                value={quote.isRateLock}
-                onChange={v => onChange('isRateLock', v)}
-              />
-            </div>
+        <FieldRow label="Rate Lock">
+          <SelectDropdown
+            value={quote.isRateLock ? 'yes' : 'no'}
+            onChange={v => onChange('isRateLock', v === 'yes')}
+            options={RATE_LOCK_OPTIONS}
+          />
+        </FieldRow>
+        {quote.isRateLock && (
+          <FieldRow label="Rate lock until">
+            <TextInput
+              type="date"
+              value={quote.rateLockDate || ''}
+              onChange={v => onChange('rateLockDate', v || null)}
+            />
           </FieldRow>
-        ) : (
-          <div /> /* empty column placeholder */
         )}
         {shouldShowField('vaType', quote) && (
           <FieldRow label="VA Type" required error={errors.VAType}>
@@ -152,16 +161,6 @@ export default function LoanDetailsSection({ quote, errors, onChange }: Props) {
               onChange={v => onChange('VAType', v)}
               options={VA_TYPES}
               error={errors.VAType}
-            />
-          </FieldRow>
-        )}
-        {shouldShowField('rateLockDate', quote) && (
-          <FieldRow label="Rate Lock Date" required error={errors.rateLockDate}>
-            <TextInput
-              type="date"
-              value={quote.rateLockDate || ''}
-              onChange={v => onChange('rateLockDate', v || null)}
-              error={errors.rateLockDate}
             />
           </FieldRow>
         )}

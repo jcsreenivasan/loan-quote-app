@@ -3,6 +3,7 @@
 import type { LoanQuote } from '@/lib/types'
 import { shouldShowField } from '@/lib/ruleEngine'
 import { formatCurrency } from '@/lib/defaults'
+import CurrencyInput from '@/components/ui/CurrencyInput'
 import TaxInsuranceSection from './TaxInsuranceSection'
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 
 export default function ProjectedPayments({ quote, onChange }: Props) {
   const showMI = shouldShowField('mortgageInsurance', quote)
+  const liveTotal = quote.monthlyPayment + Number(quote.mortgageInsurance || 0) + quote.estimatedEscrow
 
   return (
     <div>
@@ -32,9 +34,14 @@ export default function ProjectedPayments({ quote, onChange }: Props) {
         </div>
         <div>
           <p className="text-xs text-gray-500 mb-1.5">Mortgage Insurance</p>
-          <div className="px-3 py-2 rounded bg-[#111] border border-[#2a2a2a] text-sm text-gray-400 font-mono">
-            {showMI ? formatCurrency(Number(quote.mortgageInsurance) || 0) : '—'}
-          </div>
+          {showMI ? (
+            <CurrencyInput
+              value={Number(quote.mortgageInsurance) || 0}
+              onChange={v => onChange('mortgageInsurance', v)}
+            />
+          ) : (
+            <div className="px-3 py-2 rounded bg-[#111] border border-[#2a2a2a] text-sm text-gray-600 font-mono">—</div>
+          )}
         </div>
         <div>
           <p className="text-xs text-gray-500 mb-1.5">Estimated Escrow</p>
@@ -45,7 +52,7 @@ export default function ProjectedPayments({ quote, onChange }: Props) {
         <div>
           <p className="text-xs text-gray-500 mb-1.5">Est. Total Monthly Payment</p>
           <div className="px-3 py-2 rounded bg-[#111] border border-[#2a2a2a] text-sm font-bold text-blue-300 font-mono">
-            {formatCurrency(quote.estimatedTotalPayment)}
+            {formatCurrency(liveTotal)}
           </div>
         </div>
       </div>

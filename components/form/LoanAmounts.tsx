@@ -32,11 +32,12 @@ export default function LoanAmounts({ quote, errors, warnings, onChange }: Props
       {/* 4-column grid */}
       <div className="grid grid-cols-4 gap-3">
 
-        {/* Base Loan Amount — read-only */}
+        {/* Base Loan Amount */}
         <FieldRow label="Base Loan Amount">
-          <div className="px-3 py-2 rounded bg-[#111] border border-[#2a2a2a] text-sm text-gray-400 font-mono">
-            {formatCurrency(quote.loanAmount.amount)}
-          </div>
+          <CurrencyInput
+            value={quote.loanAmount.amount}
+            onChange={v => onChange('loanAmount', { ...quote.loanAmount, amount: v })}
+          />
         </FieldRow>
 
         {/* Funding Fee — read-only, shown always but dimmed when N/A */}
