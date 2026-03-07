@@ -9,6 +9,7 @@ interface Props {
   onChange:    (items: LineItem[]) => void
   lockedCount?: number
   typeOptions?: string[]
+  hideCopy?:   boolean
 }
 
 export default function LineItemList({
@@ -16,6 +17,7 @@ export default function LineItemList({
   onChange,
   lockedCount,
   typeOptions,
+  hideCopy = false,
 }: Props) {
   const defaultCount = lockedCount ?? 0
 
@@ -72,13 +74,15 @@ export default function LineItemList({
             </div>
 
             {/* Copy button */}
-            <button
-              onClick={() => copyItem(item._id)}
-              className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-blue-400 transition p-0.5"
-              title="Duplicate"
-            >
-              <Copy size={13} />
-            </button>
+            {!hideCopy && (
+              <button
+                onClick={() => copyItem(item._id)}
+                className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-blue-400 transition p-0.5"
+                title="Duplicate"
+              >
+                <Copy size={13} />
+              </button>
+            )}
 
             {/* Delete button */}
             {!isLocked ? (

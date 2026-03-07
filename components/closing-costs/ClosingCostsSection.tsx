@@ -184,8 +184,9 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
             <LineItemList
               items={quote.originationCharges}
               onChange={v => onChange('originationCharges', v)}
-              lockedCount={1}
+              lockedCount={0}
               typeOptions={ORIGINATION_CHARGE_TYPES}
+              hideCopy
             />
             {showModalA && (
               <AddConfigModal
@@ -231,7 +232,8 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
             <LineItemList
               items={quote.cannotShopFor}
               onChange={v => onChange('cannotShopFor', v)}
-              lockedCount={quote.cannotShopFor.length}
+              lockedCount={0}
+              hideCopy
             />
           </div>
 
@@ -281,7 +283,8 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
             <LineItemList
               items={quote.taxesOtherGovtFees}
               onChange={v => onChange('taxesOtherGovtFees', v)}
-              lockedCount={1}
+              lockedCount={0}
+              hideCopy
             />
             {showModalE && (
               <AddConfigModal

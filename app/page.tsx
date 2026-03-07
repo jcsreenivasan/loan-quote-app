@@ -15,11 +15,23 @@ import { createDefaultQuote, loadQuote, saveQuote } from '@/lib/defaults'
 import { recalculateQuote } from '@/lib/calculations'
 import { validateQuote } from '@/lib/ruleEngine'
 
+function validateEmail(email: string): string {
+  if (!email) return ''
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? '' : 'Invalid email address'
+}
+
+function validatePhone(phone: string): string {
+  if (!phone) return ''
+  const digits = phone.replace(/\D/g, '')
+  return digits.length >= 10 && digits.length <= 11 ? '' : 'Invalid phone number'
+}
+
 export default function Home() {
   const router = useRouter()
   const [quote, setQuote]     = useState<LoanQuote>(createDefaultQuote())
   const [errors, setErrors]   = useState<Record<string, string>>({})
   const [warnings, setWarnings] = useState<Record<string, string>>({})
+  const [fieldErrors, setFieldErrors] = useState<{ email: string; phone: string }>({ email: '', phone: '' })
 
   useEffect(() => {
     const loaded = loadQuote()
@@ -67,7 +79,9 @@ export default function Home() {
           <div className="w-44">
             <TextInput
               value={quote.borrowerEmail}
-              onChange={v => handleChange('borrowerEmail', v)}
+              onChange={v => { handleChange('borrowerEmail', v); setFieldErrors(p => ({ ...p, email: '' })) }}
+              onBlur={() => setFieldErrors(p => ({ ...p, email: validateEmail(quote.borrowerEmail) }))}
+              error={fieldErrors.email}
               placeholder="email@example.com"
             />
           </div>
@@ -75,7 +89,9 @@ export default function Home() {
           <div className="w-44">
             <TextInput
               value={quote.borrowerPhone}
-              onChange={v => handleChange('borrowerPhone', v)}
+              onChange={v => { handleChange('borrowerPhone', v); setFieldErrors(p => ({ ...p, phone: '' })) }}
+              onBlur={() => setFieldErrors(p => ({ ...p, phone: validatePhone(quote.borrowerPhone) }))}
+              error={fieldErrors.phone}
               placeholder="(555) 000-0000"
             />
           </div>
