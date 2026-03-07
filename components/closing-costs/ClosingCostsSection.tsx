@@ -189,6 +189,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               lockedCount={0}
               typeOptions={ORIGINATION_CHARGE_TYPES}
               hideCopy
+              onAddNew={() => setShowModalA(true)}
             />
             {showModalA && (
               <AddConfigModal
@@ -265,6 +266,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               onChange={v => onChange('canShopFor', v)}
               lockedCount={0}
               typeOptions={SERVICE_TYPES}
+              onAddNew={() => setShowModalC(true)}
             />
             {showModalC && (
               <AddConfigModal
