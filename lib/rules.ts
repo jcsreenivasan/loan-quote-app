@@ -52,19 +52,19 @@ export const LOAN_TYPE_CONFIG: Partial<Record<LoanProductType, LoanTypeBehavior>
   },
   FHA: {
     showFundingFee:  true,
-    fundingFeeLabel: 'Funding Fee (1.75% of Loan Amount)',
+    fundingFeeLabel: 'Funding Fee (1.75 % of Loan Amount)',
     showMI:          true,
     showVAFields:    false,
   },
   VA: {
     showFundingFee:  true,
-    fundingFeeLabel: 'VA Funding Fee',
+    fundingFeeLabel: 'Funding Fee (0 % of Loan Amount)',
     showMI:          false,
     showVAFields:    true,
   },
   USDA: {
     showFundingFee:  true,
-    fundingFeeLabel: 'Funding Fee (1% of Loan Amount)',
+    fundingFeeLabel: 'Funding Fee (1 % of Loan Amount)',
     showMI:          false,
     showVAFields:    false,
   },
