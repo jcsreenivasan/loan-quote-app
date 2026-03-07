@@ -193,6 +193,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('originationCharges', [...quote.originationCharges, item]); setShowModalA(false) }}
                 onClose={() => setShowModalA(false)}
+                typeOptions={ORIGINATION_CHARGE_TYPES}
               />
             )}
           </div>
@@ -243,6 +244,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('cannotShopFor', [...quote.cannotShopFor, item]); setShowModalB(false) }}
                 onClose={() => setShowModalB(false)}
+                typeOptions={CANNOT_SHOP_TYPES}
                 title="Add Cannot Shop For Item"
               />
             )}
@@ -267,6 +269,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('canShopFor', [...quote.canShopFor, item]); setShowModalC(false) }}
                 onClose={() => setShowModalC(false)}
+                typeOptions={SERVICE_TYPES}
               />
             )}
           </div>
@@ -302,6 +305,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('taxesOtherGovtFees', [...quote.taxesOtherGovtFees, item]); setShowModalE(false) }}
                 onClose={() => setShowModalE(false)}
+                typeOptions={GOVT_FEE_TYPES}
               />
             )}
           </div>
@@ -370,30 +374,36 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
           <div className="pt-3 border-t border-[#2a2a2a]">
             <SectionHeader letter="G" title="Initial Escrow Payment at Closing" total={totals.sectionG} />
             <div className="space-y-2 mt-1">
-              <EscrowRow
-                label="Homeowner's Insurance"
-                monthlyAmount={hoMonthly}
-                period={Number(quote.escrowPayment.homeOwnerInsurance.period)}
-                onPeriodChange={v => updateEscrow('homeOwnerInsurance', { period: v })}
-              />
+              {ei.homeOwnerInsuranceInfo.homeOwnerInsurance && ei.homeOwnerInsuranceInfo.inEscrow && (
+                <EscrowRow
+                  label="Homeowner's Insurance"
+                  monthlyAmount={hoMonthly}
+                  period={Number(quote.escrowPayment.homeOwnerInsurance.period)}
+                  onPeriodChange={v => updateEscrow('homeOwnerInsurance', { period: v })}
+                />
+              )}
               <EscrowRow
                 label="Mortgage Insurance"
                 monthlyAmount={monthlyMI}
                 period={Number(quote.escrowPayment.mortgageInsurance.period)}
                 onPeriodChange={v => updateEscrow('mortgageInsurance', { period: v })}
               />
-              <EscrowRow
-                label="Flood Insurance"
-                monthlyAmount={floodMonthly}
-                period={Number(quote.escrowPayment.floodInsurance.period)}
-                onPeriodChange={v => updateEscrow('floodInsurance', { period: v })}
-              />
-              <EscrowRow
-                label="Property Taxes"
-                monthlyAmount={taxMonthly}
-                period={Number(quote.escrowPayment.propertyTaxes.period)}
-                onPeriodChange={v => updateEscrow('propertyTaxes', { period: v })}
-              />
+              {ei.floodInsuranceInfo.floodInsurance && (
+                <EscrowRow
+                  label="Flood Insurance"
+                  monthlyAmount={floodMonthly}
+                  period={Number(quote.escrowPayment.floodInsurance.period)}
+                  onPeriodChange={v => updateEscrow('floodInsurance', { period: v })}
+                />
+              )}
+              {ei.propertyTaxesInfo.propertyTaxes && ei.propertyTaxesInfo.inEscrow && (
+                <EscrowRow
+                  label="Property Taxes"
+                  monthlyAmount={taxMonthly}
+                  period={Number(quote.escrowPayment.propertyTaxes.period)}
+                  onPeriodChange={v => updateEscrow('propertyTaxes', { period: v })}
+                />
+              )}
             </div>
           </div>
 

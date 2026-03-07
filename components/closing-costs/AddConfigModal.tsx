@@ -4,16 +4,20 @@ import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { X } from 'lucide-react'
 import type { LineItem } from '@/lib/types'
+import { ORIGINATION_CHARGE_TYPES } from '@/lib/rules'
 
 interface Props {
   onSave: (item: LineItem) => void
   onClose: () => void
+  typeOptions?: string[]
   title?: string
 }
 
-export default function AddConfigModal({ onSave, onClose, title = 'Add Configuration' }: Props) {
+export default function AddConfigModal({ onSave, onClose, typeOptions, title = 'Add Configuration' }: Props) {
   const [name,   setName]   = useState('')
+  const [type,   setType]   = useState('')
   const [amount, setAmount] = useState('')
+  const types = typeOptions ?? ORIGINATION_CHARGE_TYPES
 
   function handleSave() {
     if (!name.trim()) return
@@ -48,6 +52,18 @@ export default function AddConfigModal({ onSave, onClose, title = 'Add Configura
               className="w-full px-3 py-2 rounded bg-[#1a1a1a] border border-[#3a3a3a] text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
               autoFocus
             />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-400 mb-1">Category</label>
+            <select
+              value={type}
+              onChange={e => setType(e.target.value)}
+              className="w-full px-3 py-2 rounded bg-[#1a1a1a] border border-[#3a3a3a] text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="">Select category</option>
+              {types.map(t => <option key={t} value={t} className="bg-[#2a2a2a]">{t}</option>)}
+            </select>
           </div>
 
           <div>
