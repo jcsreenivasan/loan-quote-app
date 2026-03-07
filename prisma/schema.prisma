@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Stores the full LoanQuote as a JSON blob, scoped to a Clerk organization (or user).
+// organizationId = Clerk org ID (org_xxx) when user belongs to an org, else Clerk user ID.
+model Quote {
+  id             String   @id @default(cuid())
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  data           Json
+
+  @@index([organizationId])
+}

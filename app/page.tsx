@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { RefreshCw, CheckCircle } from 'lucide-react'
 
@@ -32,14 +32,59 @@ export default function Home() {
   const [errors, setErrors]   = useState<Record<string, string>>({})
   const [warnings, setWarnings] = useState<Record<string, string>>({})
   const [fieldErrors, setFieldErrors] = useState<{ email: string; phone: string }>({ email: '', phone: '' })
+  // DB row ID returned after first POST; null until the quote is first saved to the API
+  const dbIdRef = useRef<string | null>(null)
 
   useEffect(() => {
-    const loaded = loadQuote()
-    if (loaded) setQuote(recalculateQuote({ ...createDefaultQuote(), ...loaded }))
+    async function load() {
+      try {
+        const res = await fetch('/api/quotes')
+        if (res.ok) {
+          const quotes = await res.json()
+          if (Array.isArray(quotes) && quotes.length > 0) {
+            const { id, data } = quotes[0]
+            dbIdRef.current = id
+            setQuote(recalculateQuote({ ...createDefaultQuote(), ...data }))
+            return
+          }
+        }
+      } catch {
+        // API unavailable (no auth configured yet) — fall back to localStorage
+      }
+      const loaded = loadQuote()
+      if (loaded) setQuote(recalculateQuote({ ...createDefaultQuote(), ...loaded }))
+    }
+    load()
   }, [])
 
   function handleChange(field: keyof LoanQuote, value: unknown) {
     setQuote(prev => ({ ...prev, [field]: value }))
+  }
+
+  async function persistQuote(q: LoanQuote) {
+    // Always write to localStorage so the preview page (which reads localStorage) stays in sync
+    saveQuote(q)
+    try {
+      if (dbIdRef.current) {
+        await fetch(`/api/quotes/${dbIdRef.current}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: q }),
+        })
+      } else {
+        const res = await fetch('/api/quotes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: q }),
+        })
+        if (res.ok) {
+          const created = await res.json()
+          dbIdRef.current = created.id
+        }
+      }
+    } catch {
+      // API unavailable — localStorage write above is the fallback
+    }
   }
 
   function handleUpdateQuote() {
@@ -48,12 +93,12 @@ export default function Home() {
     setErrors(errs)
     setWarnings(warns)
     setQuote(recalculated)
-    saveQuote(recalculated)
+    persistQuote(recalculated)
   }
 
   function handleComplete() {
     const recalculated = recalculateQuote(quote)
-    saveQuote(recalculated)
+    persistQuote(recalculated)
     router.push('/preview/loan-quote')
   }
 
@@ -108,7 +153,7 @@ export default function Home() {
           <button
             className="px-3 py-1.5 rounded text-xs text-gray-200 border border-[#3a3a3a] hover:bg-[#2a2a2a] transition"
             onClick={() => {
-              saveQuote(recalculateQuote(quote))
+              persistQuote(recalculateQuote(quote))
               router.push('/preview/loan-quote')
             }}
           >
