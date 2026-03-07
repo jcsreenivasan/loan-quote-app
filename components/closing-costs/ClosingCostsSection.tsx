@@ -135,6 +135,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
   const [showModalB, setShowModalB] = useState(false)
   const [showModalC, setShowModalC] = useState(false)
   const [showModalE, setShowModalE] = useState(false)
+  const [showModalH, setShowModalH] = useState(false)
 
   function updatePrepaids(patch: Partial<Prepaids>) {
     onChange('prepaids', { ...quote.prepaids, ...patch })
@@ -409,7 +410,25 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
 
           {/* Section H: Other */}
           <div className="pt-3 border-t border-[#2a2a2a]">
-            <SectionHeader letter="H" title="Other" total={0} />
+            <SectionHeader
+              letter="H"
+              title="Other"
+              total={quote.otherCost.reduce((s, i) => s + (i.amount || 0), 0)}
+              canAdd
+              onAdd={() => setShowModalH(true)}
+            />
+            <LineItemList
+              items={quote.otherCost}
+              onChange={v => onChange('otherCost', v)}
+              lockedCount={0}
+              hideCopy
+            />
+            {showModalH && (
+              <AddConfigModal
+                onSave={item => { onChange('otherCost', [...quote.otherCost, item]); setShowModalH(false) }}
+                onClose={() => setShowModalH(false)}
+              />
+            )}
           </div>
 
           {/* I, J totals */}
