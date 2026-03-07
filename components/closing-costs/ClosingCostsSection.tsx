@@ -467,6 +467,18 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
             <span className="text-sm font-mono text-gray-100">{formatCurrency(quote.totalLoanAmount)}</span>
           </div>
           <div className="flex items-center justify-between px-4 py-3">
+            <span className="text-sm text-gray-300">Down Payment / Funds from Borrower</span>
+            <span className="text-sm font-mono text-gray-100">{formatCurrency(Number(quote.downPayment) || 0)}</span>
+          </div>
+          <div className="flex items-center justify-between px-4 py-3">
+            <span className="text-sm text-gray-300">Funds for Borrower</span>
+            <span className="text-sm font-mono text-green-400">−{formatCurrency(quote.otherCredits.fundsForBorrower)}</span>
+          </div>
+          <div className="flex items-center justify-between px-4 py-3">
+            <span className="text-sm text-gray-300">Seller Credits</span>
+            <span className="text-sm font-mono text-green-400">−{formatCurrency(quote.otherCredits.sellerCredits)}</span>
+          </div>
+          <div className="flex items-center justify-between px-4 py-3">
             <span className="text-sm text-gray-300">Estimated Cash to Close (From) Borrower</span>
             <span className="text-sm font-mono font-bold text-blue-300">{formatCurrency(totals.cashToClose)}</span>
           </div>
