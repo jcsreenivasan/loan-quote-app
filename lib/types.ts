@@ -2,7 +2,7 @@
 // Field names and structure match the MLOFlo API (verified from HAR traffic).
 
 export type LoanPurposeType = 'Purchase' | 'Refinance'
-export type LoanProductType = 'Conventional' | 'FHA' | 'VA' | 'USDA'
+export type LoanProductType = 'Conventional' | 'FHA' | 'VA' | 'USDA' | 'Other'
 export type LoanProduct     = 'FR' | 'ARM' | 'IO'   // Fixed Rate, ARM, Interest Only
 export type VATypeValue      = 'first_time_use' | 'subsequent_use' | 'exempt'
 export type RefinanceType    = 'CashOut' | 'NoCashOut'

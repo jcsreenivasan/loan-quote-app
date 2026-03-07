@@ -88,6 +88,7 @@ export default function LoanAmounts({ quote, errors, warnings, onChange }: Props
                 value={Number(quote.downPayment) || 0}
                 onChange={v => onChange('downPayment', v)}
                 error={errors.downPayment}
+                showSymbol={false}
               />
             </div>
           </div>

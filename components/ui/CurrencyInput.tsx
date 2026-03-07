@@ -9,9 +9,10 @@ interface Props {
   disabled?: boolean
   error?: string
   className?: string
+  showSymbol?: boolean
 }
 
-export default function CurrencyInput({ value, onChange, placeholder = '0.00', disabled, error, className = '' }: Props) {
+export default function CurrencyInput({ value, onChange, placeholder = '0.00', disabled, error, className = '', showSymbol = true }: Props) {
   const [focused, setFocused] = useState(false)
   const [raw, setRaw] = useState('')
 
@@ -39,7 +40,9 @@ export default function CurrencyInput({ value, onChange, placeholder = '0.00', d
 
   return (
     <div className={`relative ${className}`}>
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
+      {showSymbol && (
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
+      )}
       <input
         type="text"
         inputMode="decimal"
@@ -49,7 +52,7 @@ export default function CurrencyInput({ value, onChange, placeholder = '0.00', d
         onBlur={handleBlur}
         disabled={disabled}
         placeholder={placeholder}
-        className={`w-full pl-7 pr-3 py-2 rounded bg-[#1a1a1a] border text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed
+        className={`w-full ${showSymbol ? 'pl-7' : 'pl-3'} pr-3 py-2 rounded bg-[#1a1a1a] border text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed
           ${error ? 'border-red-500' : 'border-[#3a3a3a] hover:border-[#555]'}`}
       />
       {error && <p className="mt-1 text-xs text-red-400">{error}</p>}

@@ -25,6 +25,7 @@ const LOAN_TYPES: { value: LoanProductType; label: string }[] = [
   { value: 'FHA',          label: 'FHA' },
   { value: 'VA',           label: 'VA' },
   { value: 'USDA',         label: 'USDA Rural Development' },
+  { value: 'Other',        label: 'Other' },
 ]
 
 const VA_TYPES = [
