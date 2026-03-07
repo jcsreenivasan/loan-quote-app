@@ -37,8 +37,13 @@ export function shouldShowField(fieldKey: string, quote: Partial<LoanQuote>): bo
 
 // ─── Labels ──────────────────────────────────────────────────────────────────
 
-export function getFundingFeeLabel(loanType: string): string {
+export function getFundingFeeLabel(loanType: string, vaType?: string): string {
   if (!loanType) return 'Funding Fee'
+  if (loanType === 'VA') {
+    if (vaType === 'first_time_use') return 'Funding Fee (2.15 % of Loan Amount)'
+    if (vaType === 'subsequent_use') return 'Funding Fee (3.3 % of Loan Amount)'
+    return 'Funding Fee (0 % of Loan Amount)'
+  }
   return LOAN_TYPE_CONFIG[loanType as keyof typeof LOAN_TYPE_CONFIG]?.fundingFeeLabel ?? 'Funding Fee'
 }
 

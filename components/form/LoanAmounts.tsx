@@ -16,7 +16,7 @@ interface Props {
 
 export default function LoanAmounts({ quote, errors, warnings, onChange }: Props) {
   const showFundingFee  = shouldShowField('fundingFee', quote)
-  const fundingFeeLabel = getFundingFeeLabel(quote.productType.type)
+  const fundingFeeLabel = getFundingFeeLabel(quote.productType.type, quote.VAType)
   // interestRate.rate is stored as a percent string "6.544" → PercentInput needs decimal
   const rateDecimal = Number(quote.interestRate.rate) / 100
 
