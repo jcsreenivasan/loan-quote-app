@@ -18,7 +18,38 @@ export default function LoanAmounts({ quote, errors, warnings, onChange }: Props
   const showFundingFee  = shouldShowField('fundingFee', quote)
   const fundingFeeLabel = getFundingFeeLabel(quote.productType.type, quote.VAType)
   // interestRate.rate is stored as a percent string "6.544" → PercentInput needs decimal
-  const rateDecimal = Number(quote.interestRate.rate) / 100
+  const rateDecimal  = Number(quote.interestRate.rate) / 100
+  const isPurchase   = quote.purpose.type === 'Purchase'
+  const isCashOut    = quote.refinanceType === 'CashOut'
+
+  // Shared sub-components reused in both layouts
+  const fundingFeeField = (
+    <FieldRow label={showFundingFee ? (fundingFeeLabel ?? 'Funding Fee') : 'Funding Fee'}>
+      <div className={`px-3 py-2 rounded bg-[#111] border border-[#2a2a2a] text-sm font-mono ${showFundingFee ? 'text-gray-400' : 'text-gray-600'}`}>
+        {showFundingFee ? formatCurrency(quote.fundingFee) : '—'}
+      </div>
+    </FieldRow>
+  )
+
+  const interestRateField = (
+    <FieldRow label="Interest Rate" required error={errors.interestRate} warning={warnings.interestRate}>
+      <PercentInput
+        value={rateDecimal}
+        onChange={v => onChange('interestRate', { ...quote.interestRate, rate: String(v * 100) })}
+        error={errors.interestRate}
+        warning={warnings.interestRate}
+      />
+    </FieldRow>
+  )
+
+  const baseLoanAmountField = (
+    <FieldRow label="Base Loan Amount">
+      <CurrencyInput
+        value={quote.loanAmount.amount}
+        onChange={v => onChange('loanAmount', { ...quote.loanAmount, amount: v })}
+      />
+    </FieldRow>
+  )
 
   return (
     <div>
@@ -29,75 +60,78 @@ export default function LoanAmounts({ quote, errors, warnings, onChange }: Props
       </div>
       <div className="border-b border-[#3a3a3a] mb-4" />
 
-      {/* 4-column grid */}
-      <div className="grid grid-cols-4 gap-3">
+      {isPurchase ? (
+        /* Purchase: Base Loan Amount | Funding Fee | Interest Rate | Down Payment */
+        <div className="grid grid-cols-4 gap-3">
+          {baseLoanAmountField}
+          {fundingFeeField}
+          {interestRateField}
 
-        {/* Base Loan Amount */}
-        <FieldRow label="Base Loan Amount">
-          <CurrencyInput
-            value={quote.loanAmount.amount}
-            onChange={v => onChange('loanAmount', { ...quote.loanAmount, amount: v })}
-          />
-        </FieldRow>
-
-        {/* Funding Fee — read-only, shown always but dimmed when N/A */}
-        <FieldRow label={showFundingFee ? (fundingFeeLabel ?? 'Funding Fee') : 'Funding Fee'}>
-          <div className={`px-3 py-2 rounded bg-[#111] border border-[#2a2a2a] text-sm font-mono ${showFundingFee ? 'text-gray-400' : 'text-gray-600'}`}>
-            {showFundingFee ? formatCurrency(quote.fundingFee) : '—'}
-          </div>
-        </FieldRow>
-
-        {/* Interest Rate */}
-        <FieldRow label="Interest Rate" required error={errors.interestRate} warning={warnings.interestRate}>
-          <PercentInput
-            value={rateDecimal}
-            onChange={v => onChange('interestRate', { ...quote.interestRate, rate: String(v * 100) })}
-            error={errors.interestRate}
-            warning={warnings.interestRate}
-          />
-        </FieldRow>
-
-        {/* Down Payment with $/% toggle */}
-        <FieldRow label="Down Payment" required error={errors.downPayment} warning={warnings.downPayment}>
-          <div className="flex gap-1.5">
-            <div className="flex rounded border border-[#3a3a3a] overflow-hidden shrink-0">
-              <button
-                type="button"
-                onClick={() => onChange('downPaymentType', 'doller')}
-                className={`px-2.5 py-1 text-xs font-semibold transition ${
-                  quote.downPaymentType === 'doller'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2a2a]'
-                }`}
-              >
-                $
-              </button>
-              <button
-                type="button"
-                onClick={() => onChange('downPaymentType', 'percentage')}
-                className={`px-2.5 py-1 text-xs font-semibold transition ${
-                  quote.downPaymentType === 'percentage'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2a2a]'
-                }`}
-              >
-                %
-              </button>
+          {/* Down Payment with $/% toggle */}
+          <FieldRow label="Down Payment" required error={errors.downPayment} warning={warnings.downPayment}>
+            <div className="flex gap-1.5">
+              <div className="flex rounded border border-[#3a3a3a] overflow-hidden shrink-0">
+                <button
+                  type="button"
+                  onClick={() => onChange('downPaymentType', 'doller')}
+                  className={`px-2.5 py-1 text-xs font-semibold transition ${
+                    quote.downPaymentType === 'doller'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2a2a]'
+                  }`}
+                >
+                  $
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onChange('downPaymentType', 'percentage')}
+                  className={`px-2.5 py-1 text-xs font-semibold transition ${
+                    quote.downPaymentType === 'percentage'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2a2a]'
+                  }`}
+                >
+                  %
+                </button>
+              </div>
+              <div className="flex-1 min-w-0">
+                <CurrencyInput
+                  value={Number(quote.downPayment) || 0}
+                  onChange={v => onChange('downPayment', v)}
+                  error={errors.downPayment}
+                  showSymbol={false}
+                />
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
+            {warnings.downPayment && !errors.downPayment && (
+              <p className="mt-1 text-xs text-yellow-400">{warnings.downPayment}</p>
+            )}
+          </FieldRow>
+        </div>
+      ) : (
+        /* Refinance: Estimated Total Payoffs | [Cash Out Amount] | Base Loan Amount | Funding Fee | Interest Rate */
+        <div className={`grid gap-3 ${isCashOut ? 'grid-cols-5' : 'grid-cols-4'}`}>
+          <FieldRow label="Estimated Total Payoffs">
+            <CurrencyInput
+              value={quote.estimatedTotalPayoffs}
+              onChange={v => onChange('estimatedTotalPayoffs', v)}
+            />
+          </FieldRow>
+
+          {isCashOut && (
+            <FieldRow label="Cash Out Amount">
               <CurrencyInput
-                value={Number(quote.downPayment) || 0}
-                onChange={v => onChange('downPayment', v)}
-                error={errors.downPayment}
-                showSymbol={false}
+                value={quote.cashOutAmount}
+                onChange={v => onChange('cashOutAmount', v)}
               />
-            </div>
-          </div>
-          {warnings.downPayment && !errors.downPayment && (
-            <p className="mt-1 text-xs text-yellow-400">{warnings.downPayment}</p>
+            </FieldRow>
           )}
-        </FieldRow>
-      </div>
+
+          {baseLoanAmountField}
+          {fundingFeeField}
+          {interestRateField}
+        </div>
+      )}
 
       {warnings.noteAmount && (
         <div className="flex items-start gap-2 p-3 mt-3 rounded bg-yellow-900/20 border border-yellow-700/40">

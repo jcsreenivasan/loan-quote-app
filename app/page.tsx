@@ -35,7 +35,7 @@ export default function Home() {
 
   useEffect(() => {
     const loaded = loadQuote()
-    if (loaded) setQuote(recalculateQuote(loaded))
+    if (loaded) setQuote(recalculateQuote({ ...createDefaultQuote(), ...loaded }))
   }, [])
 
   function handleChange(field: keyof LoanQuote, value: unknown) {

@@ -195,7 +195,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('originationCharges', [...quote.originationCharges, item]); setShowModalA(false) }}
                 onClose={() => setShowModalA(false)}
-                typeOptions={ORIGINATION_CHARGE_TYPES}
               />
             )}
           </div>
@@ -246,7 +245,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('cannotShopFor', [...quote.cannotShopFor, item]); setShowModalB(false) }}
                 onClose={() => setShowModalB(false)}
-                typeOptions={CANNOT_SHOP_TYPES}
                 title="Add Cannot Shop For Item"
               />
             )}
@@ -272,7 +270,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('canShopFor', [...quote.canShopFor, item]); setShowModalC(false) }}
                 onClose={() => setShowModalC(false)}
-                typeOptions={SERVICE_TYPES}
               />
             )}
           </div>
@@ -308,7 +305,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('taxesOtherGovtFees', [...quote.taxesOtherGovtFees, item]); setShowModalE(false) }}
                 onClose={() => setShowModalE(false)}
-                typeOptions={GOVT_FEE_TYPES}
               />
             )}
           </div>
@@ -459,38 +455,67 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
         </div>
         <div className="border-b border-[#3a3a3a] mb-4" />
 
-        <div className="rounded bg-[#1a1a1a] border border-[#2a2a2a] divide-y divide-[#2a2a2a]">
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-sm text-gray-300">Total Closing Costs (J)</span>
-            <span className="text-sm font-mono text-gray-100">{formatCurrency(totals.sectionJ)}</span>
+        {quote.purpose.type === 'Refinance' ? (
+          /* Refinance layout */
+          <div className="rounded bg-[#1a1a1a] border border-[#2a2a2a] divide-y divide-[#2a2a2a]">
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Total Closing Costs (J)</span>
+              <span className="text-sm font-mono text-gray-100">{formatCurrency(totals.sectionJ)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Estimated Total Payoffs</span>
+              <span className="text-sm font-mono text-gray-100">{formatCurrency(quote.estimatedTotalPayoffs)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Total Loan Amount</span>
+              <span className="text-sm font-mono text-gray-100">{formatCurrency(quote.totalLoanAmount)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Estimated Cash to Close (To) Borrower</span>
+              <span className="text-sm font-mono font-bold text-blue-300">{formatCurrency(totals.cashToClose)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Total Closing Costs Financed</span>
+              <span className="text-sm font-mono text-gray-100">
+                {formatCurrency(quote.isClosingCostFinanced ? totals.sectionJ : quote.closingCostFinanced)}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-sm text-gray-300">Total Loan Amount</span>
-            <span className="text-sm font-mono text-gray-100">{formatCurrency(quote.totalLoanAmount)}</span>
+        ) : (
+          /* Purchase layout */
+          <div className="rounded bg-[#1a1a1a] border border-[#2a2a2a] divide-y divide-[#2a2a2a]">
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Total Closing Costs (J)</span>
+              <span className="text-sm font-mono text-gray-100">{formatCurrency(totals.sectionJ)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Total Loan Amount</span>
+              <span className="text-sm font-mono text-gray-100">{formatCurrency(quote.totalLoanAmount)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Down Payment / Funds from Borrower</span>
+              <span className="text-sm font-mono text-gray-100">{formatCurrency(Number(quote.downPayment) || 0)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Funds for Borrower</span>
+              <span className="text-sm font-mono text-green-400">−{formatCurrency(quote.otherCredits.fundsForBorrower)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Seller Credits</span>
+              <span className="text-sm font-mono text-green-400">−{formatCurrency(quote.otherCredits.sellerCredits)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Estimated Cash to Close (From) Borrower</span>
+              <span className="text-sm font-mono font-bold text-blue-300">{formatCurrency(totals.cashToClose)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-gray-300">Total Closing Costs Financed</span>
+              <span className="text-sm font-mono text-gray-100">
+                {formatCurrency(quote.isClosingCostFinanced ? totals.sectionJ : quote.closingCostFinanced)}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-sm text-gray-300">Down Payment / Funds from Borrower</span>
-            <span className="text-sm font-mono text-gray-100">{formatCurrency(Number(quote.downPayment) || 0)}</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-sm text-gray-300">Funds for Borrower</span>
-            <span className="text-sm font-mono text-green-400">−{formatCurrency(quote.otherCredits.fundsForBorrower)}</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-sm text-gray-300">Seller Credits</span>
-            <span className="text-sm font-mono text-green-400">−{formatCurrency(quote.otherCredits.sellerCredits)}</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-sm text-gray-300">Estimated Cash to Close (From) Borrower</span>
-            <span className="text-sm font-mono font-bold text-blue-300">{formatCurrency(totals.cashToClose)}</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-sm text-gray-300">Total Closing Costs Financed</span>
-            <span className="text-sm font-mono text-gray-100">
-              {formatCurrency(quote.isClosingCostFinanced ? totals.sectionJ : quote.closingCostFinanced)}
-            </span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   )

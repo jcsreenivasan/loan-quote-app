@@ -65,6 +65,10 @@ export default function LineItemList({
                 className="flex-1 px-2 py-1.5 rounded bg-[#1a1a1a] border border-[#3a3a3a] text-sm text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-0"
               >
                 <option value="">— select type —</option>
+                {/* If this item has a custom name (from modal) not in typeOptions, show it as a selectable option */}
+                {item.type && !typeOptions.includes(item.type) && (
+                  <option value={item.type}>{item.type}</option>
+                )}
                 {typeOptions.map(t => (
                   <option key={t} value={t}>{t}</option>
                 ))}

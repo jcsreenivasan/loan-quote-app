@@ -61,6 +61,7 @@ export function createDefaultQuote(): LoanQuote {
     interestRate: { rate: '0', _id: nid() },
     noteAmount: 0,
     cashOutAmount: 0,
+    estimatedTotalPayoffs: 0,
 
     monthlyPayment: 0,
     fundingFee: 0,

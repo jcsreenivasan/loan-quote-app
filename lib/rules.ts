@@ -174,8 +174,9 @@ export const PRODUCTS: { value: string; label: string }[] = [
 ]
 
 export const REFINANCE_TYPES: { value: string; label: string }[] = [
-  { value: 'CashOut',   label: 'Cash Out' },
-  { value: 'NoCashOut', label: 'No Cash Out' },
+  { value: 'CashOut',        label: 'Cash Out' },
+  { value: 'NoCashOut',      label: 'No Cash Out' },
+  { value: 'LimitedCashOut', label: 'Limited Cash Out' },
 ]
 
 export const ORIGINATION_CHARGE_TYPES = [

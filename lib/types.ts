@@ -5,7 +5,7 @@ export type LoanPurposeType = 'Purchase' | 'Refinance'
 export type LoanProductType = 'Conventional' | 'FHA' | 'VA' | 'USDA' | 'Other'
 export type LoanProduct     = 'FR' | 'ARM' | 'IO'   // Fixed Rate, ARM, Interest Only
 export type VATypeValue      = 'first_time_use' | 'subsequent_use' | 'exempt'
-export type RefinanceType    = 'CashOut' | 'NoCashOut'
+export type RefinanceType    = 'CashOut' | 'NoCashOut' | 'LimitedCashOut'
 export type DownPaymentType  = 'doller' | 'percentage'
 // LoanTerm stored in months (e.g. 360 = 30yr, 180 = 15yr)
 export type LoanTermMonths = 60 | 120 | 180 | 240 | 300 | 360
@@ -162,7 +162,8 @@ export interface LoanQuote {
   downPaymentType:  DownPaymentType
   interestRate:     InterestRateObj
   noteAmount:       string | number
-  cashOutAmount:    number
+  cashOutAmount:          number
+  estimatedTotalPayoffs:  number
 
   // Computed / calculated
   monthlyPayment:           number

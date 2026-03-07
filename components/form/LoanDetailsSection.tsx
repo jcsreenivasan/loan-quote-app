@@ -45,6 +45,7 @@ function getStateName(code: string): string {
 
 export default function LoanDetailsSection({ quote, errors, onChange }: Props) {
   const addr = quote.propertyAddress
+  const isRefinance = quote.purpose.type === 'Refinance'
   const stateCode = addr.state?.code || ''
   const loanTermOptions = LOAN_TERMS.map(t => ({ value: String(t.value), label: t.label }))
   const productOptions  = PRODUCTS.map(p => ({ value: p.value, label: p.label }))
@@ -87,7 +88,7 @@ export default function LoanDetailsSection({ quote, errors, onChange }: Props) {
         </FieldRow>
       </div>
 
-      {/* Row 2: Purchase Price / Est. Property Value | Loan Term | Purpose | Product (4-col) */}
+      {/* Row 2: PP/EPV | Loan Term | Purpose | Refinance Type (Refinance) or Product (Purchase) — always 4 cols */}
       <div className="grid grid-cols-4 gap-3 mb-3">
         {shouldShowField('purchasePrice', quote) ? (
           <FieldRow label="Purchase Price" required error={errors.noteAmount}>
@@ -120,17 +121,38 @@ export default function LoanDetailsSection({ quote, errors, onChange }: Props) {
             options={PURPOSES}
           />
         </FieldRow>
-        <FieldRow label="Product" required>
-          <SelectDropdown
-            value={quote.loanProduct}
-            onChange={v => onChange('loanProduct', v)}
-            options={productOptions}
-          />
-        </FieldRow>
+        {isRefinance ? (
+          <FieldRow label="Refinance Type" required error={errors.refinanceType}>
+            <SelectDropdown
+              value={quote.refinanceType}
+              onChange={v => onChange('refinanceType', v)}
+              options={REFINANCE_TYPES}
+              placeholder="Select Type"
+              error={errors.refinanceType}
+            />
+          </FieldRow>
+        ) : (
+          <FieldRow label="Product" required>
+            <SelectDropdown
+              value={quote.loanProduct}
+              onChange={v => onChange('loanProduct', v)}
+              options={productOptions}
+            />
+          </FieldRow>
+        )}
       </div>
 
-      {/* Row 3: Loan Type | Rate Lock (and conditionals) */}
+      {/* Row 3: [Product if Refinance] | Loan Type | Rate Lock (and conditionals) */}
       <div className="grid grid-cols-4 gap-3 mb-3">
+        {isRefinance && (
+          <FieldRow label="Product" required>
+            <SelectDropdown
+              value={quote.loanProduct}
+              onChange={v => onChange('loanProduct', v)}
+              options={productOptions}
+            />
+          </FieldRow>
+        )}
         <FieldRow label="Loan Type" required>
           <SelectDropdown
             value={quote.productType.type}
@@ -164,20 +186,9 @@ export default function LoanDetailsSection({ quote, errors, onChange }: Props) {
             />
           </FieldRow>
         )}
-        {shouldShowField('refinanceType', quote) && (
-          <FieldRow label="Refinance Type" required error={errors.refinanceType}>
-            <SelectDropdown
-              value={quote.refinanceType}
-              onChange={v => onChange('refinanceType', v)}
-              options={REFINANCE_TYPES}
-              placeholder="Select Type"
-              error={errors.refinanceType}
-            />
-          </FieldRow>
-        )}
       </div>
 
-      {/* Closing Cost Financed toggle (Refinance only) */}
+      {/* Is Closing Cost Financed toggle (Refinance only) */}
       {shouldShowField('isClosingCostFinanced', quote) && (
         <div className="flex items-center gap-4 py-2 px-3 rounded bg-[#1a1a1a] border border-[#333] mb-3">
           <span className="text-sm text-gray-300 flex-1">Is Closing Cost Financed?</span>
