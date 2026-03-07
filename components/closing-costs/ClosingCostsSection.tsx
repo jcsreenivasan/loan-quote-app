@@ -193,7 +193,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('originationCharges', [...quote.originationCharges, item]); setShowModalA(false) }}
                 onClose={() => setShowModalA(false)}
-                typeOptions={ORIGINATION_CHARGE_TYPES}
               />
             )}
           </div>
@@ -244,7 +243,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('cannotShopFor', [...quote.cannotShopFor, item]); setShowModalB(false) }}
                 onClose={() => setShowModalB(false)}
-                typeOptions={CANNOT_SHOP_TYPES}
                 title="Add Cannot Shop For Item"
               />
             )}
@@ -269,7 +267,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('canShopFor', [...quote.canShopFor, item]); setShowModalC(false) }}
                 onClose={() => setShowModalC(false)}
-                typeOptions={SERVICE_TYPES}
               />
             )}
           </div>
@@ -305,7 +302,6 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               <AddConfigModal
                 onSave={item => { onChange('taxesOtherGovtFees', [...quote.taxesOtherGovtFees, item]); setShowModalE(false) }}
                 onClose={() => setShowModalE(false)}
-                typeOptions={GOVT_FEE_TYPES}
               />
             )}
           </div>
@@ -314,30 +310,36 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
           <div className="pt-3 border-t border-[#2a2a2a]">
             <SectionHeader letter="F" title="Prepaid" total={totals.sectionF} />
             <div className="space-y-2 mt-1">
-              <PrepaidRow
-                label="Homeowner's Insurance"
-                monthlyAmount={hoMonthly}
-                period={Number(quote.prepaids.homeOwnerInsurance.period)}
-                onPeriodChange={v => updatePrepaidsItem('homeOwnerInsurance', { period: v })}
-              />
+              {ei.homeOwnerInsuranceInfo.homeOwnerInsurance && ei.homeOwnerInsuranceInfo.inEscrow && (
+                <PrepaidRow
+                  label="Homeowner's Insurance"
+                  monthlyAmount={hoMonthly}
+                  period={Number(quote.prepaids.homeOwnerInsurance.period)}
+                  onPeriodChange={v => updatePrepaidsItem('homeOwnerInsurance', { period: v })}
+                />
+              )}
               <PrepaidRow
                 label="Mortgage Insurance"
                 monthlyAmount={monthlyMI}
                 period={Number(quote.prepaids.mortgageInsurance.period)}
                 onPeriodChange={v => updatePrepaidsItem('mortgageInsurance', { period: v })}
               />
-              <PrepaidRow
-                label="Flood Insurance"
-                monthlyAmount={floodMonthly}
-                period={Number(quote.prepaids.floodInsurance.period)}
-                onPeriodChange={v => updatePrepaidsItem('floodInsurance', { period: v })}
-              />
-              <PrepaidRow
-                label="Property Taxes"
-                monthlyAmount={taxMonthly}
-                period={Number(quote.prepaids.propertyTaxes.period)}
-                onPeriodChange={v => updatePrepaidsItem('propertyTaxes', { period: v })}
-              />
+              {ei.floodInsuranceInfo.floodInsurance && (
+                <PrepaidRow
+                  label="Flood Insurance"
+                  monthlyAmount={floodMonthly}
+                  period={Number(quote.prepaids.floodInsurance.period)}
+                  onPeriodChange={v => updatePrepaidsItem('floodInsurance', { period: v })}
+                />
+              )}
+              {ei.propertyTaxesInfo.propertyTaxes && ei.propertyTaxesInfo.inEscrow && (
+                <PrepaidRow
+                  label="Property Taxes"
+                  monthlyAmount={taxMonthly}
+                  period={Number(quote.prepaids.propertyTaxes.period)}
+                  onPeriodChange={v => updatePrepaidsItem('propertyTaxes', { period: v })}
+                />
+              )}
               {/* Prepaid Interest */}
               <div className="grid grid-cols-[1fr_70px] gap-1.5 items-end">
                 <FieldRow label="Prepaid Interest (per-day rate)">
