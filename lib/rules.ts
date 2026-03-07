@@ -194,3 +194,24 @@ export const SERVICE_TYPES = [
   'Survey',
   'Other',
 ]
+
+export const CANNOT_SHOP_TYPES = [
+  'Mortgage Insurance Premium',
+  'Appraisal Fee',
+  'Flood Certification Fee',
+  'Tax Monitoring Fee',
+  'Undisclosed Debt Monitoring',
+  'Credit Report Fee',
+  'VOE Fee',
+  'Other',
+]
+
+export const GOVT_FEE_TYPES = [
+  'Recording Fee — Mortgage',
+  'Recording Fee — Deed',
+  'Transfer Tax',
+  'City/County Tax',
+  'State Tax',
+  'Stamp Tax',
+  'Other',
+]

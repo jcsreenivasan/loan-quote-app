@@ -7,7 +7,7 @@ import AddConfigModal from './AddConfigModal'
 import FieldRow from '@/components/ui/FieldRow'
 import CurrencyInput from '@/components/ui/CurrencyInput'
 import type { LoanQuote, Prepaids, EscrowPayment } from '@/lib/types'
-import { ORIGINATION_CHARGE_TYPES, SERVICE_TYPES } from '@/lib/rules'
+import { ORIGINATION_CHARGE_TYPES, SERVICE_TYPES, CANNOT_SHOP_TYPES, GOVT_FEE_TYPES } from '@/lib/rules'
 import { formatCurrency } from '@/lib/defaults'
 import { computeClosingCostTotals } from '@/lib/calculations'
 
@@ -132,6 +132,7 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
   const taxMonthly = Number(ei.propertyTaxesInfo.amount) / 12
 
   const [showModalA, setShowModalA] = useState(false)
+  const [showModalB, setShowModalB] = useState(false)
   const [showModalC, setShowModalC] = useState(false)
   const [showModalE, setShowModalE] = useState(false)
 
@@ -228,13 +229,25 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               letter="B"
               title="Services You Cannot Shop For"
               total={totals.sectionB}
+              canAdd
+              onAdd={() => setShowModalB(true)}
             />
             <LineItemList
               items={quote.cannotShopFor}
               onChange={v => onChange('cannotShopFor', v)}
               lockedCount={0}
               hideCopy
+              typeOptions={CANNOT_SHOP_TYPES}
+              onAddNew={() => setShowModalB(true)}
             />
+            {showModalB && (
+              <AddConfigModal
+                onSave={item => { onChange('cannotShopFor', [...quote.cannotShopFor, item]); setShowModalB(false) }}
+                onClose={() => setShowModalB(false)}
+                typeOptions={CANNOT_SHOP_TYPES}
+                title="Add Cannot Shop For Item"
+              />
+            )}
           </div>
 
           {/* Section C: Can Shop */}
@@ -285,11 +298,14 @@ export default function ClosingCostsSection({ quote, onChange }: Props) {
               onChange={v => onChange('taxesOtherGovtFees', v)}
               lockedCount={0}
               hideCopy
+              typeOptions={GOVT_FEE_TYPES}
+              onAddNew={() => setShowModalE(true)}
             />
             {showModalE && (
               <AddConfigModal
                 onSave={item => { onChange('taxesOtherGovtFees', [...quote.taxesOtherGovtFees, item]); setShowModalE(false) }}
                 onClose={() => setShowModalE(false)}
+                typeOptions={GOVT_FEE_TYPES}
               />
             )}
           </div>

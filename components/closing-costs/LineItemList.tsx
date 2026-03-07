@@ -10,6 +10,7 @@ interface Props {
   lockedCount?: number
   typeOptions?: string[]
   hideCopy?:   boolean
+  onAddNew?:   () => void
 }
 
 export default function LineItemList({
@@ -18,6 +19,7 @@ export default function LineItemList({
   lockedCount,
   typeOptions,
   hideCopy = false,
+  onAddNew,
 }: Props) {
   const defaultCount = lockedCount ?? 0
 
@@ -53,13 +55,22 @@ export default function LineItemList({
             {typeOptions ? (
               <select
                 value={item.type ?? ''}
-                onChange={e => updateType(item._id, e.target.value)}
+                onChange={e => {
+                  if (e.target.value === '__add_new__') {
+                    onAddNew?.()
+                  } else {
+                    updateType(item._id, e.target.value)
+                  }
+                }}
                 className="flex-1 px-2 py-1.5 rounded bg-[#1a1a1a] border border-[#3a3a3a] text-sm text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-0"
               >
                 <option value="">— select type —</option>
                 {typeOptions.map(t => (
                   <option key={t} value={t}>{t}</option>
                 ))}
+                {onAddNew && (
+                  <option value="__add_new__" className="text-blue-400">+ Add new…</option>
+                )}
               </select>
             ) : (
               <span className="flex-1 text-sm text-gray-300 truncate">{item.type || '—'}</span>

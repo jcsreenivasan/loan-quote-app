@@ -114,12 +114,6 @@ export default function Home() {
           >
             Preview Loan Quote
           </button>
-          <button
-            className="px-3 py-1.5 rounded text-xs text-gray-400 border border-[#3a3a3a] hover:bg-[#2a2a2a] transition"
-            onClick={() => {/* stub */}}
-          >
-            Back to list
-          </button>
         </div>
       </header>
 
