@@ -237,7 +237,11 @@ export function recalculateQuote(quote: LoanQuote): LoanQuote {
   const downPmt    = Number(q.downPayment) || 0
 
   // Base loan amount
-  const baseLoan = calcBaseLoanAmount(noteAmt, downPmt)
+  // When noteAmount (Purchase Price / Property Value) is provided, derive baseLoan
+  // from it. Otherwise respect whatever the user typed into loanAmount.amount directly.
+  const baseLoan = noteAmt > 0
+    ? calcBaseLoanAmount(noteAmt, downPmt)
+    : Number(q.loanAmount.amount) || 0
   q.loanAmount = { ...q.loanAmount, amount: baseLoan }
 
   // Funding fee
